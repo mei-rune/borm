@@ -5,10 +5,11 @@
 package borm_test
 
 import (
-	"cn/com/hengwei/commons/borm"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/runner-mei/borm"
 )
 
 func TestOpen(t *testing.T) {

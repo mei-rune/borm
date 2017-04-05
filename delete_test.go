@@ -5,9 +5,10 @@
 package borm_test
 
 import (
-	"cn/com/hengwei/commons/borm"
 	"testing"
 	"time"
+
+	"github.com/runner-mei/borm"
 )
 
 func TestDelete(t *testing.T) {

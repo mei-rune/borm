@@ -101,6 +101,10 @@ func (it *Iterator) Next() bool {
 	return bytes.Compare(it.key, it.endKey) <= 0
 }
 
+func (it *Iterator) Key() []byte {
+	return it.key
+}
+
 func (it *Iterator) Read(value interface{}) error {
 	return it.B.decode(it.value, value)
 }

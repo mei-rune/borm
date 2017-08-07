@@ -47,6 +47,12 @@ func (b *Bucket) GetRange(start, end string, cb func(it *Iterator) error) error 
 			endKey:   []byte(end),
 			isFirst:  true,
 		}
+		if start == "" {
+			it.startKey = nil
+		}
+		if end == "" {
+			it.endKey = nil
+		}
 
 		return cb(&it)
 	})
@@ -98,11 +104,8 @@ func (it *Iterator) Next() bool {
 	if it.endKey == nil {
 		return true
 	}
-	return bytes.Compare(it.key, it.endKey) <= 0
-}
 
-func (it *Iterator) Key() []byte {
-	return it.key
+	return bytes.Compare(it.key, it.endKey) <= 0
 }
 
 func (it *Iterator) Read(value interface{}) error {
@@ -111,4 +114,12 @@ func (it *Iterator) Read(value interface{}) error {
 
 func (it *Iterator) ReadWith(value interface{}, decoder DecodeFunc) error {
 	return decoder(it.value, value)
+}
+
+func (it *Iterator) Key() []byte {
+	return it.key
+}
+
+func (it *Iterator) Value() []byte {
+	return it.value
 }

@@ -27,3 +27,15 @@ func CreateID(t time.Time, count uint32) string {
 	binary.BigEndian.PutUint32(b[4:], count)
 	return hex.EncodeToString(b[:])
 }
+
+// CreateID create a unique ObjectId.
+func GetTimeFromID(id string) time.Time {
+	bs, err := hex.DecodeString(id)
+	if err != nil {
+		panic(err)
+	}
+
+	// Timestamp, 4 bytes, big endian
+	unix := binary.BigEndian.Uint32(bs[:])
+	return time.Unix(int64(unix), 0)
+}

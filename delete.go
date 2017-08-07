@@ -5,8 +5,6 @@
 package borm
 
 import (
-	"bytes"
-
 	"github.com/boltdb/bolt"
 )
 
@@ -39,14 +37,22 @@ func (b *Bucket) DeleteRange(start, end string) error {
 			return ErrBucketNotFound
 		}
 
-		var (
-			startKey = []byte(start)
-			endKey   = []byte(end)
-			cursor   = bkt.Cursor()
-		)
+		var it = &Iterator{
+			B:        b,
+			Cursor:   bkt.Cursor(),
+			startKey: []byte(start),
+			endKey:   []byte(end),
+			isFirst:  true,
+		}
+		if start == "" {
+			it.startKey = nil
+		}
+		if end == "" {
+			it.endKey = nil
+		}
 
-		for k, _ := cursor.Seek(startKey); k != nil && bytes.Compare(k, endKey) <= 0; k, _ = cursor.Next() {
-			bkt.Delete(k)
+		for it.Next() {
+			bkt.Delete(it.Key())
 		}
 		return nil
 	})

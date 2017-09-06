@@ -28,11 +28,11 @@ func CreateID(t time.Time, count uint32) string {
 	return hex.EncodeToString(b[:])
 }
 
-// CreateID create a unique ObjectId.
-func GetTimeFromID(id string) time.Time {
+// TimeFromID read time from id string.
+func TimeFromID(id string) time.Time {
 	bs, err := hex.DecodeString(id)
 	if err != nil {
-		panic(err)
+		return time.Time{}
 	}
 
 	// Timestamp, 4 bytes, big endian

@@ -2,6 +2,8 @@ package borm
 
 import (
 	"errors"
+	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -177,4 +179,10 @@ func filesRead(nameWith func(t time.Time) string, start, end time.Time, cb fileC
 
 func OpenTSEngine(nameWith func(t time.Time) string) (*TSEngine, error) {
 	return &TSEngine{nameWith: nameWith}, nil
+}
+
+func OpenTS(path string) (*TSEngine, error) {
+	return &TSEngine{nameWith: func(t time.Time) string {
+		filepath.Join(path, strconv.Itoa(t.Year())+"_"+strconv.Itoa(t.YearDay())+".ts")
+	}}, nil
 }

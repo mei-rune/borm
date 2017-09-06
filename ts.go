@@ -183,6 +183,6 @@ func OpenTSEngine(nameWith func(t time.Time) string) (*TSEngine, error) {
 
 func OpenTS(path string) (*TSEngine, error) {
 	return &TSEngine{nameWith: func(t time.Time) string {
-		filepath.Join(path, strconv.Itoa(t.Year())+"_"+strconv.Itoa(t.YearDay())+".ts")
+		return filepath.Join(path, strconv.Itoa(t.Year())+"_"+strconv.Itoa(t.YearDay())+".ts")
 	}}, nil
 }

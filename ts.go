@@ -2,8 +2,10 @@ package borm
 
 import (
 	"errors"
+	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -26,6 +28,31 @@ func (db *TSEngine) Close() error {
 		db.bkt = nil
 	}
 	return err
+}
+
+func (db *TSEngine) EnforceRetention(path string, t time.Time) error {
+	shards, err := ListShards(path, t.Location())
+	if err != nil {
+		return err
+	}
+	return db.removeShardsBefore(shards, t)
+}
+
+func (db *TSEngine) removeShardsBefore(shards Shards, t time.Time) error {
+	for _, shard := range shards {
+		if shard.startTime.Before(t) {
+			if strings.ToLower(filepath.Base(shard.path)) ==
+				strings.ToLower(db.currentFile) {
+				if err := db.Close(); err != nil {
+					return err
+				}
+			}
+			if err := os.Remove(shard.path); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func (db *TSEngine) open(file string) (*Store, *Bucket, error) {

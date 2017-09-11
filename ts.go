@@ -12,7 +12,7 @@ import (
 )
 
 type TSEngine struct {
-	//basePath    string
+	basePath    string
 	nameWith    func(t time.Time) string
 	currentFile string
 	store       *Store
@@ -30,8 +30,8 @@ func (db *TSEngine) Close() error {
 	return err
 }
 
-func (db *TSEngine) EnforceRetention(path string, t time.Time) error {
-	shards, err := ListShards(path, t.Location())
+func (db *TSEngine) EnforceRetention(t time.Time) error {
+	shards, err := ListShards(db.basePath, t.Location())
 	if err != nil {
 		return err
 	}
@@ -204,12 +204,18 @@ func filesRead(nameWith func(t time.Time) string, start, end time.Time, cb fileC
 	return nil
 }
 
-func OpenTSEngine(nameWith func(t time.Time) string) (*TSEngine, error) {
-	return &TSEngine{nameWith: nameWith}, nil
+func OpenTSEngine(path string, nameWith func(t time.Time) string) (*TSEngine, error) {
+	return &TSEngine{
+		basePath: path,
+		nameWith: func(t time.Time) string {
+			return filepath.Join(path, nameWith(t))
+		}}, nil
 }
 
 func OpenTS(path string) (*TSEngine, error) {
-	return &TSEngine{nameWith: func(t time.Time) string {
-		return filepath.Join(path, strconv.Itoa(t.Year())+"_"+strconv.Itoa(t.YearDay())+".ts")
-	}}, nil
+	return &TSEngine{
+		basePath: path,
+		nameWith: func(t time.Time) string {
+			return filepath.Join(path, strconv.Itoa(t.Year())+"_"+strconv.Itoa(t.YearDay())+".ts")
+		}}, nil
 }

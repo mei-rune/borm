@@ -79,7 +79,9 @@ func ListShards(path string, loc *time.Location) (Shards, error) {
 	var shards Shards
 	// Open all indexes.
 	for _, fi := range files {
-		if fi.IsDir() || strings.HasPrefix(fi.Name(), ".") {
+		if fi.IsDir() ||
+			strings.HasPrefix(fi.Name(), ".") ||
+			strings.HasSuffix(fi.Name(), ".lock") {
 			continue
 		}
 		shardPath := filepath.Join(path, fi.Name())

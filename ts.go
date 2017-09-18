@@ -123,15 +123,14 @@ func (db *TSEngine) read(fileName string, cb func(bkt *Bucket) error) error {
 		}
 
 		return cb(db.bkt)
-	} else {
-		store, bkt, err := db.open(fileName)
-		if err == nil {
-			return err
-		}
-		defer store.Close()
-
-		return cb(bkt)
 	}
+	store, bkt, err := db.open(fileName)
+	if err != nil {
+		return err
+	}
+	defer store.Close()
+
+	return cb(bkt)
 }
 
 func (db *TSEngine) Query(start, end time.Time, cb func(it *Iterator) error) error {

@@ -107,7 +107,7 @@ func (db *TSEngine) Get(id string, record interface{}) error {
 
 	fileName := db.nameWith(time)
 	return db.read(fileName, func(bkt *Bucket) error {
-		return bkt.Get(id, &record)
+		return bkt.Get(id, record)
 	})
 }
 
